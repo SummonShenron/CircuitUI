@@ -6,6 +6,7 @@ export const paletteEntries: Array<{ kind: ComponentKind; title: string; descrip
   { kind: 'image', title: 'Image', description: 'Show an image by URL', category: 'Display' },
   { kind: 'text_input', title: 'Text input', description: 'Collect a value from the user', category: 'Inputs' },
   { kind: 'button', title: 'Button', description: 'Trigger a workflow run', category: 'Actions' },
+  { kind: 'chat', title: 'Chat', description: 'Conversation thread bound to an event-triggered workflow', category: 'Actions' },
   { kind: 'container', title: 'Container', description: 'Group components together', category: 'Layout' },
 ]
 
@@ -16,6 +17,7 @@ export const defaultProps: Record<ComponentKind, Record<string, unknown>> = {
   image: { src: '', alt: '' },
   table: { rows: [] },
   container: {},
+  chat: { placeholder: 'Type a message…' },
 }
 
 export const defaultSize: Record<ComponentKind, { width: number; height: number }> = {
@@ -25,4 +27,5 @@ export const defaultSize: Record<ComponentKind, { width: number; height: number 
   image: { width: 200, height: 150 },
   table: { width: 360, height: 220 },
   container: { width: 320, height: 240 },
+  chat: { width: 340, height: 420 },
 }

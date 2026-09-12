@@ -47,3 +47,13 @@ class WorkflowBuilderClient:
 
     async def run_workflow(self, workflow_id: str, inputs: dict[str, Any]) -> dict[str, Any]:
         return await self._request("POST", f"/workflows/{workflow_id}/run", json={"inputs": inputs})
+
+    async def run_console(
+        self, workflow_id: str, event_name: str, conversation_id: str, message: str, history: list[dict[str, str]]
+    ) -> Any:
+        """Calls workflow_builder's chat-console endpoint for an event-triggered workflow."""
+        return await self._request(
+            "POST",
+            f"/workflows/{workflow_id}/console",
+            json={"event_name": event_name, "conversation_id": conversation_id, "message": message, "history": history},
+        )

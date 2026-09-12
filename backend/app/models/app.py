@@ -13,6 +13,7 @@ class ComponentKind(StrEnum):
     IMAGE = "image"
     TABLE = "table"
     CONTAINER = "container"
+    CHAT = "chat"
 
 
 class Position(BaseModel):

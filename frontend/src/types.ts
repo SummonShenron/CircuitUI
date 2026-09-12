@@ -1,4 +1,6 @@
-export type ComponentKind = 'label' | 'button' | 'text_input' | 'image' | 'table' | 'container'
+export type ComponentKind = 'label' | 'button' | 'text_input' | 'image' | 'table' | 'container' | 'chat'
+
+export type ChatMessage = { role: 'user' | 'assistant'; content: string }
 
 export type ComponentBinding = {
   workflow_id: string
@@ -42,9 +44,12 @@ export type CircuitAppSummary = {
 
 export type WorkflowInputSchema = { key: string; label: string; type: string; required: boolean }
 
+export type WorkflowGraphNode = { id: string; type: string; config?: Record<string, unknown> }
+
 export type WorkflowSummary = {
   id: string
   name: string
   description?: string
   inputs?: WorkflowInputSchema[]
+  graph?: { nodes: WorkflowGraphNode[] }
 }

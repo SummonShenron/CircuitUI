@@ -26,6 +26,13 @@ class RunWorkflowRequest(BaseModel):
     inputs: dict[str, Any] = {}
 
 
+class RunConsoleRequest(BaseModel):
+    event_name: str
+    conversation_id: str
+    message: str
+    history: list[dict[str, str]] = []
+
+
 @router.get("")
 async def list_workflows(client: ClientDependency) -> list[dict[str, Any]]:
     """Workflows the signed-in user can bind app components to, proxied from workflow_builder."""
@@ -40,3 +47,9 @@ async def get_workflow(workflow_id: str, client: ClientDependency) -> dict[str, 
 @router.post("/{workflow_id}/run")
 async def run_workflow(workflow_id: str, payload: RunWorkflowRequest, client: ClientDependency) -> dict[str, Any]:
     return await client.run_workflow(workflow_id, payload.inputs)
+
+
+@router.post("/{workflow_id}/console")
+async def run_console(workflow_id: str, payload: RunConsoleRequest, client: ClientDependency) -> Any:
+    """Sends one chat turn to an event-triggered workflow, mirroring workflow_builder's own chat console."""
+    return await client.run_console(workflow_id, payload.event_name, payload.conversation_id, payload.message, payload.history)
