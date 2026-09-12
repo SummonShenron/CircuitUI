@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     # Base URL (including /api) of the Circuit workflow_builder backend that
     # published apps call into for data and actions.
     workflow_builder_api_url: str = "http://127.0.0.1:8010/api"
-
+    vite_circuitui_api_url: str | None = None
     model_config = SettingsConfigDict(
         env_file=Path(__file__).resolve().parents[2] / ".env",
         env_file_encoding="utf-8",
