@@ -1,0 +1,81 @@
+.dashboard {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+}
+
+.dashboard-header h1 {
+  margin: 0;
+}
+
+.dashboard-header p {
+  color: #5b6270;
+}
+
+.dashboard-create {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+}
+
+.dashboard-create input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d5d8de;
+  border-radius: 6px;
+}
+
+.dashboard-create button,
+.dashboard-card-delete {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background: #4f46e5;
+  color: white;
+  cursor: pointer;
+}
+
+.dashboard-card-delete {
+  background: transparent;
+  color: #b3261e;
+}
+
+.dashboard-error {
+  color: #b3261e;
+}
+
+.dashboard-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dashboard-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #e2e4e9;
+  border-radius: 8px;
+  background: white;
+  padding: 0.25rem 0.25rem 0.25rem 1rem;
+}
+
+.dashboard-card-open {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 0.75rem 0;
+  cursor: pointer;
+}
+
+.dashboard-card-open span {
+  color: #5b6270;
+  font-size: 0.85rem;
+}
