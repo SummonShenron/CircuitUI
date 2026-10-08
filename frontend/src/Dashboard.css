@@ -1,81 +1,222 @@
-.dashboard {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 2.5rem 1.5rem;
+.dashboard-shell {
+  min-height: 100vh;
+  background: #f4f6f1;
+  color: #17332d;
 }
 
-.dashboard-header h1 {
+.dashboard-topbar {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  padding: 0 34px;
+  background: #17332d;
+  color: #f6f6ef;
+}
+
+.dashboard-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dashboard-brand .logo-badge {
+  background: #f6f6ef;
+  color: #17332d;
+}
+
+.dashboard-brand .logo-text {
+  color: #f6f6ef;
+}
+
+.dashboard-body {
+  max-width: 1100px;
+  margin: auto;
+  padding: 54px 34px;
+  box-sizing: border-box;
+}
+
+.dashboard-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.dashboard-heading-copy {
+  flex: 0 1 55%;
+  min-width: 0;
+}
+
+.dashboard-heading-copy span,
+.dashboard-create > span {
+  color: #658077;
+  font: 11px 'DM Mono', monospace;
+  letter-spacing: 0.04em;
+}
+
+.dashboard-heading-copy h1 {
+  margin: 7px 0;
+  font: 700 38px/1.1 Fraunces, serif;
+  letter-spacing: 0;
+}
+
+.dashboard-heading-copy p {
+  max-width: 480px;
   margin: 0;
-}
-
-.dashboard-header p {
-  color: #5b6270;
+  color: #668278;
+  font-size: 14px;
+  line-height: 1.6;
 }
 
 .dashboard-create {
+  flex: 1 1 40%;
+  min-width: 0;
+  padding: 16px 18px;
+  border-radius: 14px;
+}
+
+.dashboard-create-form {
   display: flex;
-  gap: 0.5rem;
-  margin: 1.5rem 0;
+  gap: 8px;
+  margin-top: 10px;
 }
 
-.dashboard-create input {
+.dashboard-create-form input {
+  min-width: 0;
   flex: 1;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #d5d8de;
-  border-radius: 6px;
+  padding: 9px;
+  border: 1px solid #cbd9ce;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  border-bottom: 4px solid rgba(147, 179, 161, 0.35);
 }
 
-.dashboard-create button,
-.dashboard-card-delete {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 6px;
-  background: #4f46e5;
-  color: white;
-  cursor: pointer;
+.dashboard-create-form input:hover {
+  border-bottom: 8px solid rgba(147, 179, 161, 0.35);
+  border-color: rgba(147, 179, 161, 0.35);
+  transition: all 0.2s ease;
+  transform: translateY(-4px);
 }
-
-.dashboard-card-delete {
-  background: transparent;
-  color: #b3261e;
+.dashboard-create-form input:active {
+  border-bottom: 4px solid rgba(147, 179, 161, 0.35);
+  border-color: rgba(147, 179, 161, 0.35);
+  transition: all 0.2s ease;
+  transform: translateY(4px);
+}
+.dashboard-create-form input:focus {
+  outline: none;
 }
 
 .dashboard-error {
-  color: #b3261e;
+  padding: 10px;
+  margin-bottom: 16px;
+  color: #994438;
+  background: #fff7f5;
+  border: 1px solid #e8cbc6;
+  border-radius: 4px;
 }
 
-.dashboard-list {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+.dashboard-empty {
+  min-height: 220px;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 10px;
+  text-align: center;
+  color: #789087;
+  border: 1px dashed #afc3b4;
+  border-radius: 6px;
+  background: #f9fbf7;
+  font-size: 13px;
 }
 
-.dashboard-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border: 1px solid #e2e4e9;
-  border-radius: 8px;
-  background: white;
-  padding: 0.25rem 0.25rem 0.25rem 1rem;
+.dashboard-empty strong {
+  color: #35574b;
 }
 
-.dashboard-card-open {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.15rem;
-  background: none;
-  border: none;
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.app-card {
+  min-height: 150px;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 10px;
+  padding: 16px;
   text-align: left;
-  padding: 0.75rem 0;
+  color: #24433b;
   cursor: pointer;
 }
 
-.dashboard-card-open span {
-  color: #5b6270;
-  font-size: 0.85rem;
+.app-card-top {
+  display: flex;
+  justify-content: space-between;
+}
+
+.app-card-icon {
+  display: grid;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  color: #2d7585;
+  background: #dcecf0;
+  border-radius: 4px;
+}
+
+.app-card-delete {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: #a05a4d;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.app-card-delete:hover {
+  background: #fbeae7;
+}
+
+.app-card strong {
+  font-size: 14px;
+}
+
+.app-card p {
+  margin: 0;
+  color: #789087;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.app-card-meta {
+  display: flex;
+  justify-content: space-between;
+  color: #769187;
+  font: 10px 'DM Mono', monospace;
+}
+
+.app-card-meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+@media (max-width: 700px) {
+  .dashboard-heading {
+    flex-direction: column;
+  }
+  .dashboard-heading-copy,
+  .dashboard-create {
+    flex-basis: auto;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .dashboard-topbar,
+  .dashboard-body {
+    padding-inline: 16px;
+  }
 }

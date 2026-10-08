@@ -2,6 +2,8 @@ import { StrictMode, useEffect, useState, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { ClerkProvider, SignInButton, SignedIn, SignedOut, useAuth } from '@clerk/clerk-react'
 import './index.css'
+import './theme.css'
+import './effects.css'
 import App from './App.tsx'
 import { isCircuitApiUrl } from './apiConfig'
 

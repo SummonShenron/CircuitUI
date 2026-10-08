@@ -1,0 +1,165 @@
+/* Shared interaction language: tactile "3D lip" buttons for anything you click,
+   and glass/glow cards for anything you browse. Palette stays green/cream/gold. */
+
+.btn-3d {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgba(23, 51, 45, 0.15);
+  border-radius: 8px;
+  background: #e8a848;
+  color: #17332d;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 9px 14px;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 8px 0 0 #b9822f,
+    0 12px 18px rgba(184, 130, 47, 0.35);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.15s ease;
+}
+
+.btn-3d:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: #f0b96c;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 8px 0 0 #b9822f,
+    0 12px 18px rgba(184, 130, 47, 0.35);
+}
+
+.btn-3d:active:not(:disabled) {
+  transform: translateY(5px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 1px 0 0 #17332d,
+    0 2px 6px rgba(23, 51, 45, 0.3);
+}
+
+.btn-3d:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+}
+
+/* Quieter variant: same tactile press, neutral sage surface instead of gold.
+   Used for tabs, palette tiles, icon actions - things you click often but
+   that shouldn't compete with the primary gold actions. */
+.btn-3d-quiet {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #d7e0d8;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #24433b;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 8px 13px;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 4px 0 0 #d7e0d8,
+    0 6px 10px rgba(23, 51, 45, 0.12);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.15s ease;
+}
+
+.btn-3d-quiet:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: #93b3a1;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 5px 0 0 #93b3a1,
+    0 8px 14px rgba(38, 67, 53, 0.16);
+}
+
+.btn-3d-quiet:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 1px 0 0 #93b3a1,
+    0 2px 4px rgba(38, 67, 53, 0.16);
+}
+
+.btn-3d-quiet.active {
+  transform: translateY(3px);
+  background: linear-gradient(135deg, rgba(232, 168, 72, 0.22), rgba(232, 168, 72, 0.08));
+  border-color: #e8a848;
+  color: #8a611f;
+  box-shadow:
+    inset 0 2px 4px rgba(23, 51, 45, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 1px 0 0 #e8a848,
+    0 2px 6px rgba(184, 130, 47, 0.25);
+}
+
+.btn-3d-quiet:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+}
+
+/* Browsable card: soft glass surface that lifts with a gold glow + light
+   sweep on hover. For things you scan and click into (app cards, etc.) */
+.glass-card {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(147, 179, 161, 0.4);
+  border-radius: 14px;
+  box-shadow: 0 10px 26px rgba(23, 51, 45, 0.08);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.glass-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(232, 168, 72, 0.16), transparent);
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+
+.glass-card:hover {
+  transform: translateY(-5px);
+  border-color: #e8a848;
+  box-shadow: 0 16px 36px rgba(184, 130, 47, 0.22);
+}
+
+.glass-card:hover::after {
+  left: 100%;
+}
+
+/* Static frosted container: same glass material, no hover lift/sweep -
+   for panels you work inside rather than browse (sidebars, quick-create). */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(147, 179, 161, 0.35);
+  border-bottom: 4px solid rgba(147, 179, 161, 0.35);
+}
+.glass-panel::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: rgba(147, 179, 161, 0.35);
+  border-radius: 0 0 14px 14px;
+}
+.glass-panel:hover {
+  border-bottom: 8px solid rgba(147, 179, 161, 0.35);
+  transition: border-bottom 0.2s ease;
+  transform: translateY(-4px);
+}
+

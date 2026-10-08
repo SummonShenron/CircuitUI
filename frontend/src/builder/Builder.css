@@ -2,6 +2,10 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
+  background: #f7f8f2d1;
+  /* Headroom so .builder-header has somewhere to translate into on hover
+     instead of clipping against the top of the viewport. */
+  /* padding-top: 6px; */
 }
 
 .builder-loading {
@@ -9,69 +13,118 @@
 }
 
 .builder-header {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 1rem;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid #e2e4e9;
-  background: white;
+  padding: 0.85rem 1.25rem;
+  background: #17332d;
+  border-radius: 8px;
+  position: relative;
+  /* Highest tier: sits before everything else in the DOM, so needs to
+     out-rank all of it to cast its shadow downward instead of being
+     painted over (grid/flex siblings paint in DOM order by default). */
+  z-index: 4;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 8px 0 0 #0d211c,
+    0 18px 30px -10px rgba(23, 51, 45, 0.5);
+  transition: box-shadow 0.2s ease;
+}
+.builder-header:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 10px 0 0 #0a1a16,
+    0 24px 38px -10px rgba(23, 51, 45, 0.6);
+  transform: translateY(-4px);
+}
+.builder-header-left {
+  display: flex;
+  align-items: center;
+  justify-self: start;
+  min-width: 0;
 }
 
-.builder-back {
+.builder-header-center {
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
+
+.builder-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-self: end;
+}
+
+.builder-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   border: none;
   background: none;
+  padding: 0;
   cursor: pointer;
-  color: #4f46e5;
+}
+
+.builder-logo .logo-badge {
+  background: #17332d;
+  color: #f6f6ef;
+}
+
+.builder-logo .logo-text {
+  color: #f6f6ef;
 }
 
 .builder-app-name {
-  flex: 1;
-  font-size: 1.1rem;
-  font-weight: 600;
-  border: none;
-  outline: none;
+    width: 280px;
+    color: #17332d;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid transparent;
+    text-align: center;
+    font-family: Fraunces, Georgia, serif;
+    font-weight: 700;
+    font-size: 19px;
+    outline: none;
 }
 
-.builder-save,
-.builder-preview-toggle {
-  padding: 0.4rem 1rem;
-  border: none;
-  border-radius: 6px;
-  background: #4f46e5;
-  color: white;
-  cursor: pointer;
-}
-
-.builder-preview-toggle {
-  background: #16a34a;
+.builder-app-name:hover:not(:disabled),
+.builder-app-name:focus:not(:disabled) {
+  border-bottom-color: #93b3a1;
 }
 
 .builder-screen-tabs {
   display: flex;
-  gap: 0.25rem;
-  padding: 0.5rem 1rem;
-  background: #eceef2;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: #f7f8f2d1;
+  border-radius: 14px;
+  position: relative;
+  /* Middle tier: below .builder-header (4) so the header's shadow falls on
+     top of it, above .builder-body's children (2) so its own shadow falls
+     on top of the canvas underneath it. */
+  z-index: 3;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 6px 0 0 #dce9dd,
+    0 16px 26px -10px rgba(23, 51, 45, 0.3);
+  transition: box-shadow 0.2s ease;
 }
 
-.builder-screen-tab,
-.builder-screen-tab-active,
-.builder-screen-tab-add {
-  border: none;
-  background: none;
-  padding: 0.35rem 0.75rem;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.builder-screen-tab-active {
-  background: white;
-  font-weight: 600;
+.builder-screen-tabs:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 8px 0 0 #93b3a1,
+    0 20px 32px -10px rgba(23, 51, 45, 0.4);
+  transform: translateY(-4px);
 }
 
 .builder-body {
   flex: 1;
   display: grid;
-  grid-template-columns: 220px 1fr 260px;
+  grid-template-columns: 220px 1fr 340px;
   overflow: hidden;
 }
 
@@ -81,16 +134,82 @@
 
 .builder-palette,
 .builder-properties {
-  background: white;
-  border-right: 1px solid #e2e4e9;
-  padding: 1rem;
-  overflow-y: auto;
+	background: rgba(247, 248, 242, 0.9);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	position: relative;
+  border-radius: 14px;
+	/* ComponentPalette renders before Canvas in the DOM, and grid items paint
+	   in DOM order, so without this the canvas's opaque background papers
+	   over the palette's shadow. Properties panel renders after the canvas
+	   so it never had this problem, but both get it explicitly for symmetry. */
+	z-index: 2;
+	/* Flex column + min-height:0 lets the inner *-scroll div actually shrink
+	   to the grid row's height instead of growing past it - required for
+	   overflow-y:auto to kick in on smaller screens. The scroll div is a
+	   separate element (not this one) specifically so overflow never clips
+	   this element's own outward-bleeding box-shadow lip. */
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+}
+
+.builder-palette-scroll,
+.builder-properties-scroll {
+	flex: 1;
+	min-height: 0;
+	overflow-y: auto;
+	padding: 19px 14px;
+}
+
+/* Always-on 3D lip, offset toward the canvas instead of downward - same
+   technique as .btn-3d's resting shadow, just turned 90deg for a side panel,
+   and chunkier so the panel reads as a physically raised slab.
+   Only box-shadow/transform change on hover - never border-width, padding,
+   or anything else that touches the box model - so nothing inside can
+   reflow or change shape while hovering. */
+.builder-palette,
+.builder-properties {
+	transition: all 0.2s ease;
+}
+
+.builder-palette {
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.7),
+		inset -1px 0 0 rgba(255, 255, 255, 0.35),
+		8px 0 0 0 #c3d2c6,
+		18px 0 30px -10px rgba(23, 51, 45, 0.4);
+}
+
+.builder-palette:hover {
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.8),
+		inset -1px 0 0 rgba(255, 255, 255, 0.45),
+		10px 0 0 0 #93b3a1,
+		24px 0 38px -10px rgba(23, 51, 45, 0.5);
+  transform: translateX(-4px) translateY(-4px);
+  border-bottom: 8px solid #93b3a1;
 }
 
 .builder-properties {
-  border-right: none;
-  border-left: 1px solid #e2e4e9;
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.7),
+		inset 1px 0 0 rgba(255, 255, 255, 0.35),
+		-8px 0 0 0 #c3d2c6,
+		-18px 0 30px -10px rgba(23, 51, 45, 0.4);
 }
+
+.builder-properties:hover {
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.8),
+		inset 1px 0 0 rgba(255, 255, 255, 0.45),
+		-10px 0 0 0 #93b3a1,
+		-24px 0 38px -10px rgba(23, 51, 45, 0.5);
+  transform: translateY(-4px) translateX(4px);
+  border-bottom: 8px solid #93b3a1;
+}
+
+
 
 .builder-palette-group h3 {
   font-size: 0.75rem;
@@ -100,14 +219,46 @@
 }
 
 .builder-palette-item {
-  display: flex;
-  flex-direction: column;
-  padding: 0.5rem;
-  border: 1px solid #e2e4e9;
-  border-radius: 6px;
-  margin-bottom: 0.4rem;
-  cursor: grab;
-  background: #fafbfc;
+	text-align: left;
+	display: grid;
+	grid-template-columns: 31px 1fr 15px;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	padding: 9px;
+	margin-bottom: 6px;
+	color: #24433b;
+	background: #fff;
+	border: 1px solid #d9e3da;
+	/* Bottom-only, same numbers as .glass-panel / .builder-properties
+	   input/select: growing border-BOTTOM only changes the box's height,
+	   never its width, so the wrapped description text can't re-flow into
+	   a different line count the way growing border-right did. */
+	border-bottom: 4px solid #c3d2c6;
+  border-right: 4px solid #c3d2c6;
+	border-radius: 12px;
+	cursor: grab;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+	transition: all 0.2s ease;
+}
+.builder-palette-item:hover {
+	border-bottom: 8px solid #93b3a1;
+  border-right: 8px solid #93b3a1;
+	border-color: #93b3a1;
+	transform: translateY(-4px) translateX(-4px);
+	transition: all 0.2s ease;
+  /* transform: translateX(-4px); */
+}
+.builder-palette-item:active {
+	border-bottom: 1px solid #93b3a1;
+  border-right: 1px solid #93b3a1;
+	border-color: #93b3a1;
+	transform: translateY(4px) translateX(4px);
+	transition: all 0.2s ease;
+}
+.builder-palette-item strong {
+	display: block;
+	font-size: 12px;
 }
 
 .builder-palette-item span {
@@ -115,13 +266,74 @@
   color: #8a8f9a;
 }
 
+.builder-palette-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 31px;
+  height: 31px;
+  border-radius: 5px;
+  background: #eef5f0;
+  color: #24433b;
+  flex-shrink: 0;
+}
+
+.builder-palette-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.builder-palette-chevron {
+  color: #93b3a1;
+  font-size: 14px;
+}
+
 .builder-canvas {
   position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 32px;
+  background-color: #e4e6ea;
+  overflow: auto;
+}
+
+.builder-artboard {
+  position: relative;
+  flex: none;
   background:
     linear-gradient(90deg, #eceef2 1px, transparent 1px) 0 0 / 24px 24px,
     linear-gradient(#eceef2 1px, transparent 1px) 0 0 / 24px 24px;
   background-color: #f9fafb;
-  overflow: auto;
+  box-shadow: 0 0 0 1px rgba(23, 51, 45, 0.1), 0 20px 40px rgba(23, 51, 45, 0.12);
+}
+
+/* A shipped app should never show design-time chrome, so the grid (and the
+   artboard boundary shadow) disappears entirely in Preview. */
+.builder-artboard-preview {
+  background: #f9fafb;
+  box-shadow: none;
+}
+
+.canvas-guide {
+  position: absolute;
+  background: #e8a848;
+  pointer-events: none;
+  z-index: 999;
+}
+
+.canvas-guide-v {
+  top: 0;
+  bottom: 0;
+  width: 1px;
+}
+
+.canvas-guide-h {
+  left: 0;
+  right: 0;
+  height: 1px;
 }
 
 .canvas-component {
@@ -135,14 +347,27 @@
 }
 
 .canvas-component-selected {
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+  border-color: #e8a848;
+  box-shadow: 0 0 0 3px rgba(232, 168, 72, 0.3);
 }
 
 .canvas-component-chat {
   align-items: stretch;
   padding: 0;
   overflow: hidden;
+}
+
+.canvas-resize-handle {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  background: #e8a848;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgba(23, 51, 45, 0.3);
+  cursor: nwse-resize;
 }
 
 .chat-widget {
@@ -180,8 +405,8 @@
 
 .chat-bubble-user {
   align-self: flex-end;
-  background: #4f46e5;
-  color: white;
+  background: #17332d;
+  color: #f6f6ef;
 }
 
 .chat-bubble-assistant {
@@ -205,26 +430,97 @@
   font-size: 0.8rem;
 }
 
-.chat-input-row button {
-  padding: 0.35rem 0.75rem;
-  border: none;
-  border-radius: 6px;
-  background: #4f46e5;
-  color: white;
-  cursor: pointer;
+.chat-send {
+  padding: 6px 12px;
   font-size: 0.8rem;
-}
-
-.chat-input-row button:disabled {
-  background: #c7c9d9;
-  cursor: default;
 }
 
 .canvas-placeholder {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: #8a8f9a;
   font-size: 0.8rem;
-  width: 100%;
   text-align: center;
+}
+
+/* Button/input/image fill their whole component box (rather than shrinking
+   to content) so dragging the resize handle actually grows the visible
+   element instead of leaving dead space around it - same fix as labels.
+   Scoped to direct children so the chat widget's own inner input/button
+   (nested a level deeper) are untouched. */
+.canvas-component > button,
+.canvas-component > input {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.canvas-component > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.canvas-table-box {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+.canvas-list-rows {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+}
+
+.canvas-list-row-item {
+  position: absolute;
+}
+
+.canvas-container-box {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+}
+
+.canvas-label-box {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  /* No padding of its own - the effect-base preset's own (scalable) padding
+     applies here instead, so a bigger font gets proportionally more room. */
+}
+
+.canvas-message-row {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+
+.canvas-message-row-user {
+  justify-content: flex-end;
+}
+
+.canvas-message-row-assistant {
+  justify-content: flex-start;
+}
+
+.canvas-container-label {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  color: #8a8f9a;
+  font-size: 0.7rem;
+  pointer-events: none;
 }
 
 .canvas-binding-badge {
@@ -232,7 +528,16 @@
   bottom: -1.2rem;
   left: 0;
   font-size: 0.65rem;
-  color: #4f46e5;
+  color: #8a611f;
+}
+
+.canvas-visibility-badge {
+  position: absolute;
+  top: -1.2rem;
+  left: 0;
+  font-size: 0.65rem;
+  color: #5b6270;
+  white-space: nowrap;
 }
 
 .canvas-error-badge {
@@ -270,14 +575,62 @@
   margin-bottom: 0.75rem;
 }
 
+.builder-properties-checkbox-row {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 0.5rem !important;
+}
+
+.builder-properties-checkbox-row input {
+  width: auto;
+}
+
 .builder-properties input,
 .builder-properties select {
   padding: 0.4rem;
   border: 1px solid #d5d8de;
   border-radius: 6px;
   font-size: 0.9rem;
+  border-bottom: 4px solid #dce9dd;
+  
+  transition: all 0.2s ease;
 }
-
+.builder-properties select:hover {
+  border-bottom: 8px solid #93b3a1;
+  
+  border-color: #93b3a1;
+  transition: all 0.2s ease;
+  transform: translateY(-4px);
+}
+.builder-properties select:active {
+  border-bottom: 4px solid #93b3a1;
+  border-left: 4px solid #93b3a1;
+  border-color: #93b3a1;
+  transition: all 0.2s ease;
+  transform: translateY(4px);
+}
+.builder-properties select:focus {
+  outline: none;
+}
+.builder-properties input:hover {
+  border-bottom: 8px solid #93b3a1;
+  
+  border-color: #93b3a1;
+  transition: all 0.2s ease;
+  /* transform: translateY(-4px); */
+  transform: translateY(-4px);
+}
+.builder-properties input:active {
+  border-bottom: 1px solid #93b3a1;
+  border-right: 1px solid #93b3a1;
+  border-left: 1px solid #93b3a1;
+  border-color: #93b3a1;
+  transition: all 0.2s ease;
+  transform: translateY(4px);
+}
+.builder-properties input:focus {
+  outline: none;
+}
 .builder-properties-workflow-row {
   margin-bottom: 0.75rem;
 }
@@ -288,13 +641,8 @@
 
 .builder-properties-refresh {
   width: 100%;
-  padding: 0.3rem;
-  border: 1px solid #d5d8de;
-  border-radius: 6px;
-  background: #fafbfc;
-  color: #4f46e5;
+  justify-content: center;
   font-size: 0.75rem;
-  cursor: pointer;
 }
 
 .builder-properties-empty {
@@ -314,6 +662,114 @@
   border-radius: 6px;
   padding: 0.5rem;
   margin-bottom: 0.75rem;
+}
+
+.builder-properties-action {
+  border: 1px solid #e2e4e9;
+  border-radius: 6px;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.builder-properties-action-header {
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+}
+
+.builder-properties-action-header select {
+  flex: 1;
+}
+
+.builder-properties-action-remove {
+  flex: none;
+  width: 28px;
+  border: 1px solid #d5d8de;
+  border-radius: 6px;
+  background: #fff;
+  color: #8a611f;
+  cursor: pointer;
+}
+
+.builder-properties-action input,
+.builder-properties-action select {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 0.5rem;
+}
+
+.builder-properties-action input:last-child,
+.builder-properties-action select:last-child {
+  margin-bottom: 0;
+}
+
+.builder-properties-field-row {
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+  align-items: center;
+}
+
+.builder-properties-field-row input {
+  margin-bottom: 0;
+}
+
+.builder-properties-field-row .builder-properties-action-remove {
+  flex: none;
+}
+
+.builder-properties-action-footer {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.builder-properties-action-footer button {
+  flex: 1;
+}
+
+.builder-formula-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(23, 51, 45, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+}
+
+.builder-formula-modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px 24px;
+  max-width: 480px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 48px rgba(23, 51, 45, 0.35);
+}
+
+.builder-formula-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.builder-formula-modal-header h3 {
+  margin: 0;
+}
+
+.builder-formula-code {
+  background: #f6f6ef;
+  border: 1px solid #e2e4e9;
+  border-radius: 6px;
+  padding: 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  white-space: pre;
 }
 
 .builder-properties-hint {
@@ -340,11 +796,27 @@
 
 .builder-properties-delete {
   width: 100%;
+  justify-content: center;
   margin-top: 1rem;
-  padding: 0.5rem;
-  border: none;
-  border-radius: 6px;
   background: #fdecea;
   color: #b3261e;
-  cursor: pointer;
+  border-color: #f3c6c0;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 4px 0 0 #e3a89f,
+    0 6px 10px rgba(179, 38, 30, 0.14);
+}
+
+.builder-properties-delete:hover {
+  border-color: #e3a89f;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 5px 0 0 #cf7a6f,
+    0 8px 14px rgba(179, 38, 30, 0.2) !important; 
+}
+.builder-properties-delete:active {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 1px 0 0 #cf7a6f,
+    0 3px 5px rgba(179, 38, 30, 0.2) !important; 
 }

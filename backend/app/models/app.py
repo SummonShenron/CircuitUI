@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from enum import StrEnum
-from typing import Literal
+from typing import Annotated, Literal, Union
 from uuid import uuid4
 
 from pydantic import BaseModel, Field
@@ -14,6 +14,8 @@ class ComponentKind(StrEnum):
     TABLE = "table"
     CONTAINER = "container"
     CHAT = "chat"
+    LIST = "list"
+    MESSAGE = "message"
 
 
 class Position(BaseModel):
@@ -36,6 +38,66 @@ class ComponentBinding(BaseModel):
     output_key: str | None = None
 
 
+class ComponentStyle(BaseModel):
+    """Preset keys (see frontend/src/effectPresets.ts) for this component's
+    base/hover/active look - not raw CSS, just a choice from a curated menu."""
+
+    base: str | None = None
+    hover: str | None = None
+    active: str | None = None
+
+
+class RunWorkflowAction(BaseModel):
+    type: Literal["run_workflow"] = "run_workflow"
+    workflow_id: str
+    workflow_name: str = ""
+    input_mapping: dict[str, str] = Field(default_factory=dict)
+    output_key: str | None = None
+
+
+class SetVariableAction(BaseModel):
+    type: Literal["set_variable"] = "set_variable"
+    name: str
+    # A formula (see frontend/src/builder/expressions.ts), evaluated at
+    # run time - e.g. `true`, `{{count}} + 1`, `{{name}} != ""`.
+    value: str = ""
+
+
+class NavigateAction(BaseModel):
+    type: Literal["navigate"] = "navigate"
+    screen_id: str
+
+
+class SendChatMessageAction(BaseModel):
+    """Injects a message into a chat component as if the user had typed and
+    sent it - e.g. an "example question" button elsewhere on the screen."""
+
+    type: Literal["send_chat_message"] = "send_chat_message"
+    target_component_id: str
+    message: str = ""
+
+
+class ListField(BaseModel):
+    key: str
+    value: str = ""
+
+
+class AppendToListAction(BaseModel):
+    """Pushes one structured entry onto a variable (creating it as a list if
+    it isn't one yet) - each field's value is its own formula, evaluated at
+    run time. This is how a custom-built chat feed grows."""
+
+    type: Literal["append_to_list"] = "append_to_list"
+    variable: str
+    fields: list[ListField] = Field(default_factory=list)
+
+
+ActionStep = Annotated[
+    Union[RunWorkflowAction, SetVariableAction, NavigateAction, SendChatMessageAction, AppendToListAction],
+    Field(discriminator="type"),
+]
+
+
 class Component(BaseModel):
     id: str = Field(default_factory=lambda: uuid4().hex)
     type: ComponentKind
@@ -44,12 +106,22 @@ class Component(BaseModel):
     size: Size
     props: dict[str, object] = Field(default_factory=dict)
     binding: ComponentBinding | None = None
+    style: ComponentStyle | None = None
+    # When set, `position` is relative to the parent container's top-left
+    # corner instead of the screen's, and this component moves with it.
+    parent_id: str | None = None
+    trigger: Literal["on_click", "on_load"] | None = None
+    actions: list[ActionStep] = Field(default_factory=list)
+    # A formula (see frontend/src/builder/expressions.ts); blank/None means
+    # always visible.
+    visibility_expression: str | None = None
 
 
 class Screen(BaseModel):
     id: str = Field(default_factory=lambda: uuid4().hex)
     name: str = "Screen 1"
     components: list[Component] = Field(default_factory=list)
+    size: Size = Field(default_factory=lambda: Size(width=1280, height=800))
 
 
 class CircuitAppBase(BaseModel):

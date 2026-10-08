@@ -1,18 +1,29 @@
 import type { CircuitComponent, ComponentKind, Screen, WorkflowInputSchema, WorkflowSummary } from '../types'
+import { componentLiveValue } from './expressions'
 
-const TEMPLATE_PATTERN = /\{\{\s*([a-zA-Z0-9_-]+)\s*\}\}/g
+// `.` is allowed so `{{item.field}}` matches as one token (see below).
+const TEMPLATE_PATTERN = /\{\{\s*([a-zA-Z0-9_.-]+)\s*\}\}/g
 
 function componentDisplayValue(component: CircuitComponent, runtimeValues: Record<string, unknown>): string {
-  if (component.id in runtimeValues) return String(runtimeValues[component.id] ?? '')
-  if (component.type === 'text_input') return String(component.props.value ?? '')
-  if (component.type === 'label') return String(component.props.text ?? '')
-  return ''
+  const value = componentLiveValue(component, runtimeValues)
+  return value === null || value === undefined ? '' : String(value)
 }
 
-/** Replaces `{{component_id}}` references with that component's current live value. Anything else passes through as a literal. */
-export function resolveTemplate(template: string, screen: Screen, runtimeValues: Record<string, unknown>): string {
-  return template.replace(TEMPLATE_PATTERN, (_match, componentId: string) => {
-    const component = screen.components.find((item) => item.id === componentId)
+/**
+ * Replaces `{{component_id}}` references with that component's current live
+ * value, as plain display text. `{{item}}`/`{{item.field}}` resolve against
+ * `item` instead - the current row when this is evaluated inside a List
+ * template (see Canvas.tsx). Anything else passes through as a literal.
+ */
+export function resolveTemplate(template: string, screen: Screen, runtimeValues: Record<string, unknown>, item?: unknown): string {
+  return template.replace(TEMPLATE_PATTERN, (_match, token: string) => {
+    if (token === 'item') return item === undefined || item === null ? '' : String(item)
+    if (token.startsWith('item.')) {
+      const field = token.slice('item.'.length)
+      const value = item && typeof item === 'object' ? (item as Record<string, unknown>)[field] : undefined
+      return value === undefined || value === null ? '' : String(value)
+    }
+    const component = screen.components.find((candidate) => candidate.id === token)
     return component ? componentDisplayValue(component, runtimeValues) : ''
   })
 }

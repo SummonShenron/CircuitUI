@@ -1,0 +1,103 @@
+/* Style-preset library: each class here is one selectable option in the
+   Base/Hover/Active dropdowns (see effectPresets.ts). Hover/active classes
+   hook real :hover/:active pseudo-classes rather than React state, so they
+   cost nothing and never trigger a re-render.
+
+   Rule for every preset in this file: only transform, box-shadow, background,
+   and border-color may change between states. Anything that can move layout
+   (width, padding, border-width) is fixed once and never touched again -
+   that's what makes it safe to apply to any component's content. */
+
+/* --effect-scale defaults to 1 for everything; a component with an
+   adjustable font size (e.g. a label) sets it inline to fontSize/16 so the
+   box's padding and rounding grow with the text instead of staying pinned
+   to a fixed pixel size. */
+[class*="effect-"] {
+  --effect-scale: 1;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+/* ---- Base (resting) presets ---- */
+
+/* Baseline reset shared by every base preset - fixed once (per instance),
+   never animated between states, so it carries no reflow risk regardless of
+   which preset is layered on. */
+[class*="effect-base-"] {
+  padding: calc(8px * var(--effect-scale)) calc(16px * var(--effect-scale));
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.effect-base-flat {
+  background: #fff;
+  color: #24433b;
+  border: 1px solid #d9e3da;
+  border-radius: calc(6px * var(--effect-scale));
+}
+
+.effect-base-raised {
+  background: #fff;
+  color: #24433b;
+  border: 1px solid #d9e3da;
+  border-bottom: 4px solid #c3d2c6;
+  border-right: 4px solid #c3d2c6;
+  border-radius: calc(8px * var(--effect-scale));
+}
+
+.effect-base-pill {
+  background: #e8a848;
+  color: #17332d;
+  border: 1px solid rgba(23, 51, 45, 0.15);
+  border-radius: 999px;
+  font-weight: 700;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.effect-base-glass {
+  background: rgba(255, 255, 255, 0.78);
+  color: #24433b;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(147, 179, 161, 0.4);
+  border-radius: calc(12px * var(--effect-scale));
+  box-shadow: 0 10px 22px rgba(23, 51, 45, 0.1);
+}
+
+/* ---- Hover presets - each defines a *complete* look, replacing whatever
+   the base preset set at rest, rather than layering on top of it. ---- */
+
+.effect-hover-raise:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 8px 0 0 #93b3a1,
+    0 18px 26px rgba(38, 67, 53, 0.3);
+}
+
+.effect-hover-float:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 16px 32px rgba(184, 130, 47, 0.28),
+    0 0 0 1px rgba(232, 168, 72, 0.4);
+}
+
+.effect-hover-subtle:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 12px rgba(23, 51, 45, 0.18);
+}
+
+/* ---- Active (pressed) presets ---- */
+
+.effect-active-press:active {
+  transform: translateY(3px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 1px 0 0 #93b3a1,
+    0 2px 4px rgba(38, 67, 53, 0.2);
+}
+
+.effect-active-subtle:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 6px rgba(23, 51, 45, 0.14);
+}
